@@ -792,7 +792,8 @@ class _LeadDetailState extends State<LeadDetail> {
                                     fontWeight: FontWeight.w400),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 18.0),
                                 child: InkWell(
                                   onTap: () async {
                                     await lp.modalBottomSheetMenu1(context);
@@ -847,7 +848,6 @@ class _LeadDetailState extends State<LeadDetail> {
                                 FieldControl(
                                   lead: widget.lead,
                                   fieldControle: [
-
                                     [
                                       'Month',
                                       false,
@@ -1066,7 +1066,7 @@ class _LeadDetailState extends State<LeadDetail> {
                                     [
                                       'TOSS',
                                       false,
-                                      lp.lead!.toss,
+                                      lp.lead!.tos,
                                     ],
                                     [
                                       'POS',
@@ -1292,6 +1292,46 @@ class _LeadDetailState extends State<LeadDetail> {
                                       'Loan Status',
                                       false,
                                       lp.lead!.loanStatus,
+                                    ],
+                                    [
+                                      'Strategy',
+                                      false,
+                                      lp.lead!.strategy,
+                                    ],
+                                    [
+                                      'Loan Age',
+                                      false,
+                                      lp.lead!.loan_age,
+                                    ],
+                                    [
+                                      'Color Code',
+                                      false,
+                                      lp.lead!.color_code,
+                                    ],
+                                    [
+                                      'Mob',
+                                      false,
+                                      lp.lead!.mob,
+                                    ],
+                                    [
+                                      'Mob Type',
+                                      false,
+                                      lp.lead!.mob_type,
+                                    ],
+                                    [
+                                      'Recovery No.',
+                                      false,
+                                      lp.lead!.recovery_no,
+                                    ],
+                                    [
+                                      'Priority Pool',
+                                      false,
+                                      lp.lead!.priority_pool,
+                                    ],
+                                    [
+                                      'E-Receipting Ids',
+                                      false,
+                                      lp.lead!.e_receipting_ids,
                                     ],
                                   ],
                                 ),

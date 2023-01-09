@@ -65,39 +65,112 @@ class LeadsProvider with ChangeNotifier {
   bool isOffline = false;
 
   Future<void> getLeads() async {
-    _isFirstLoadRunning = true;
-    notifyListeners();
-    var page = 1;
-    var url = '${ApiManager.BASE_URL}${ApiManager.leads}?page=$page';
-    debugPrint(url);
-    final headers = {
-      'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer $token',
-    };
-    print('00000000000000000000000000000000000000000');
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    bool isCacheExist = await APICacheManager().isAPICacheKeyExist('getLeads');
-    print(connectivityResult.toString() + ' & ' + isCacheExist.toString());
-
-    if (connectivityResult != ConnectivityResult.none) {
-      print('THis is from url hit');
-      isOffline = false;
+    try {
+      _isFirstLoadRunning = true;
       notifyListeners();
+      var page = 1;
+      var url = '${ApiManager.BASE_URL}${ApiManager.leads}?page=$page';
+      debugPrint(url);
+      final headers = {
+        'Authorization-token': '3MPHJP0BC63435345341',
+        'Authorization': 'Bearer $token',
+      };
+      print('00000000000000000000000000000000000000000');
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      bool isCacheExist =
+          await APICacheManager().isAPICacheKeyExist('getLeads');
+      print(connectivityResult.toString() + ' & ' + isCacheExist.toString());
 
-      try {
-        print('before response --> $filterData');
-        print('before response --> $url');
-        _isLoading = true;
+      if (connectivityResult != ConnectivityResult.none) {
+        print('THis is from url hit');
+        isOffline = false;
         notifyListeners();
-        final response =
-            await http.post(Uri.parse(url), headers: headers, body: filterData);
 
-        var responseData = json.decode(response.body);
+        try {
+          print('before response --> $filterData');
+          print('before response --> $url');
+          _isLoading = true;
+          notifyListeners();
+          final response = await http.post(Uri.parse(url),
+              headers: headers, body: filterData);
 
-        if (response.statusCode == 200) {
-          var cacheModel =
-              APICacheDBModel(key: 'getLeads', syncData: response.body);
-          await APICacheManager().addCacheData(cacheModel);
+          var responseData = json.decode(response.body);
+
+          if (response.statusCode == 200) {
+            var cacheModel =
+                APICacheDBModel(key: 'getLeads', syncData: response.body);
+            await APICacheManager().addCacheData(cacheModel);
+            var success = responseData['success'];
+            var leadData = responseData['data'];
+            notifyListeners();
+            var message = responseData['message'];
+            _leadsData.clear();
+            _leadsByDate.clear();
+            _page = 1;
+            notifyListeners();
+            if (responseData['data'] != 0) {
+              var data = leadData['data'];
+              total = leadData['total'];
+              if (success == 200) {
+                _isLoading = false;
+                notifyListeners();
+                print('data.length   ${data.length}');
+                List<LeadsByDate> leads = [];
+
+                data.forEach((v) {
+                  _leadsData.add(Lead.fromJson(v));
+                  // var lead = Lead.fromJson(v);
+                  // var contains = leads.any((element) =>
+                  //     DateFormat('yyyy-MM-dd')
+                  //         .format(DateTime.parse(element.date!)) ==
+                  //     DateFormat('yyyy-MM-dd').format(DateTime.parse(lead.date!)));
+                  // if (contains) {
+                  //   leads
+                  //       .firstWhere((element) =>
+                  //           DateFormat('yyyy-MM-dd')
+                  //               .format(DateTime.parse(element.date!)) ==
+                  //           DateFormat('yyyy-MM-dd').format(DateTime.parse(lead.date!)))
+                  //       .leads!
+                  //       .add(lead);
+                  // } else {
+                  //   leads.add(
+                  //       LeadsByDate(date: lead.date.toString(), leads: [lead]));
+                  // }
+                });
+                // _leadsByDate = leads;
+
+                notifyListeners();
+              }
+              // _leadsByDate.sort((a, b) =>
+              //     DateTime.parse(b.date!).compareTo(DateTime.parse(a.date!)));
+              notifyListeners();
+            } else {
+              total = leadData;
+              _isLoading = false;
+              notifyListeners();
+              Fluttertoast.showToast(msg: '$message');
+            }
+          } else {
+            _isLoading = false;
+            notifyListeners();
+            throw const HttpException('Failed To get Leads');
+          }
+        } catch (error) {
+          _isLoading = false;
+          print(error);
+          notifyListeners();
+          rethrow;
+        }
+      } else {
+        isOffline = true;
+        notifyListeners();
+        if (isCacheExist) {
+          var cacheData = await APICacheManager().getCacheData('getLeads');
+
+          print('THis is from cache hit   $cacheData');
+
+          var responseData = jsonDecode(cacheData.syncData);
+
           var success = responseData['success'];
           var leadData = responseData['data'];
           notifyListeners();
@@ -148,81 +221,13 @@ class LeadsProvider with ChangeNotifier {
             notifyListeners();
             Fluttertoast.showToast(msg: '$message');
           }
-        } else {
-          _isLoading = false;
+
+          _isFirstLoadRunning = false;
           notifyListeners();
-          throw const HttpException('Failed To get Leads');
         }
-      } catch (error) {
-        _isLoading = false;
-        print(error);
-        notifyListeners();
-        rethrow;
       }
-    } else {
-      isOffline = true;
-      notifyListeners();
-      if (isCacheExist) {
-        var cacheData = await APICacheManager().getCacheData('getLeads');
-
-        print('THis is from cache hit   $cacheData');
-
-        var responseData = jsonDecode(cacheData.syncData);
-
-        var success = responseData['success'];
-        var leadData = responseData['data'];
-        notifyListeners();
-        var message = responseData['message'];
-        _leadsData.clear();
-        _leadsByDate.clear();
-        _page = 1;
-        notifyListeners();
-        if (responseData['data'] != 0) {
-          var data = leadData['data'];
-          total = leadData['total'];
-          if (success == 200) {
-            _isLoading = false;
-            notifyListeners();
-            print('data.length   ${data.length}');
-            List<LeadsByDate> leads = [];
-
-            data.forEach((v) {
-              _leadsData.add(Lead.fromJson(v));
-              // var lead = Lead.fromJson(v);
-              // var contains = leads.any((element) =>
-              //     DateFormat('yyyy-MM-dd')
-              //         .format(DateTime.parse(element.date!)) ==
-              //     DateFormat('yyyy-MM-dd').format(DateTime.parse(lead.date!)));
-              // if (contains) {
-              //   leads
-              //       .firstWhere((element) =>
-              //           DateFormat('yyyy-MM-dd')
-              //               .format(DateTime.parse(element.date!)) ==
-              //           DateFormat('yyyy-MM-dd').format(DateTime.parse(lead.date!)))
-              //       .leads!
-              //       .add(lead);
-              // } else {
-              //   leads.add(
-              //       LeadsByDate(date: lead.date.toString(), leads: [lead]));
-              // }
-            });
-            // _leadsByDate = leads;
-
-            notifyListeners();
-          }
-          // _leadsByDate.sort((a, b) =>
-          //     DateTime.parse(b.date!).compareTo(DateTime.parse(a.date!)));
-          notifyListeners();
-        } else {
-          total = leadData;
-          _isLoading = false;
-          notifyListeners();
-          Fluttertoast.showToast(msg: '$message');
-        }
-
-        _isFirstLoadRunning = false;
-        notifyListeners();
-      }
+    } catch (e) {
+      debugPrint('Leads provider get leads error $e');
     }
     _isFirstLoadRunning = false;
     notifyListeners();
@@ -915,7 +920,7 @@ class LeadsProvider with ChangeNotifier {
     var url = ApiManager.BASE_URL + ApiManager.get_developers;
     final headers = {
       'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer ${token}',
+      'Authorization': 'Bearer $token',
     };
     try {
       final response = await http.get(Uri.parse(url), headers: headers);
@@ -941,7 +946,7 @@ class LeadsProvider with ChangeNotifier {
     var url = ApiManager.BASE_URL + ApiManager.properties;
     final headers = {
       'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer ${token}',
+      'Authorization': 'Bearer $token',
     };
     try {
       final response = await http.get(Uri.parse(url), headers: headers);
@@ -967,7 +972,7 @@ class LeadsProvider with ChangeNotifier {
     var url = ApiManager.BASE_URL + ApiManager.getStatus;
     final headers = {
       'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer ${token}',
+      'Authorization': 'Bearer $token',
     };
     try {
       _isLoading = true;
@@ -1002,7 +1007,7 @@ class LeadsProvider with ChangeNotifier {
     var url = ApiManager.BASE_URL + ApiManager.source;
     final headers = {
       'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer ${token}',
+      'Authorization': 'Bearer $token',
     };
     try {
       final response = await http.get(Uri.parse(url), headers: headers);
@@ -1028,7 +1033,7 @@ class LeadsProvider with ChangeNotifier {
     var url = ApiManager.BASE_URL + ApiManager.get_priorities;
     final headers = {
       'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer ${token}',
+      'Authorization': 'Bearer $token',
     };
     try {
       final response = await http.get(Uri.parse(url), headers: headers);
@@ -1052,37 +1057,28 @@ class LeadsProvider with ChangeNotifier {
 
   void setIsFlrApplied() {
     // print(jsonEncode(filterData));
-    print(selectedAgent);
-    print(fromDate);
-    print(toDate);
-    print(selectedProperty);
-    print(selectedPriority);
-    print(selectedBkt);
-    print(selectedProd);
-    print(selectedDeveloper);
-    print(multiSelectedStatus);
-    print(multiSelectedSources);
-    print(query.text);
-    print(queryBkt.text);
-    print(filterData);
-    print(selectedAgent == null &&
-        fromDate == null &&
-        toDate == null &&
-        selectedProperty == null &&
-        selectedPriority == null &&
-        selectedDeveloper == null &&
-        multiSelectedStatus.isEmpty &&
-        multiSelectedSources.isEmpty &&
-        filterData == {} &&
-        query.text.isEmpty &&
-        queryBkt.text.isEmpty);
+    print('selectedAgent $selectedAgent');
+    print('fromDate $fromDate');
+    print('toDate $toDate');
+    print('selectedProperty $selectedProperty');
+    print('selectedPriority $selectedPriority');
+    print('selectedBkt $selectedBkt');
+    print('selectedProd $selectedProd');
+    print('selectedDeveloper $selectedDeveloper');
+    print('multiSelectedStatus $multiSelectedStatus');
+    print('multiSelectedSources $multiSelectedSources');
+    print('query.text  ${query.text}');
+    print('queryBkt.text ${queryBkt.text}');
+    print('filterData $filterData');
+    print(
+        '${selectedAgent == null && fromDate == null && toDate == null && selectedProperty == null && selectedPriority == null && (selectedProd == null || selectedProd == 'All') && (selectedBkt == null || selectedBkt == 'All') && selectedDeveloper == null && multiSelectedStatus.isEmpty && multiSelectedSources.isEmpty && query.text.isEmpty} ${selectedAgent == null && fromDate == null && toDate == null && selectedProperty == null && selectedPriority == null && (selectedProd == null || selectedProd == 'All') && (selectedBkt == null || selectedBkt == 'All') && selectedDeveloper == null && multiSelectedStatus.isEmpty && multiSelectedSources.isEmpty && query.text.isEmpty}');
     if (selectedAgent == null &&
         fromDate == null &&
         toDate == null &&
         selectedProperty == null &&
         selectedPriority == null &&
-        selectedProd == null &&
-        selectedBkt == null &&
+        (selectedProd == null || selectedProd == 'All') &&
+        (selectedBkt == null || selectedBkt == 'All') &&
         selectedDeveloper == null &&
         multiSelectedStatus.isEmpty &&
         multiSelectedSources.isEmpty &&
@@ -1096,6 +1092,7 @@ class LeadsProvider with ChangeNotifier {
       if (kDebugMode) {
         print('making true');
       }
+      print('Is filter applied 0: $isFlrApplied');
 
       isFlrApplied = true;
       notifyListeners();
@@ -1195,7 +1192,7 @@ class LeadsProvider with ChangeNotifier {
     var url = ApiManager.BASE_URL + ApiManager.source;
     final headers = {
       'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer ${token}',
+      'Authorization': 'Bearer $token',
     };
     // try {
     //   final response = await http.get(Uri.parse(url), headers: headers);
@@ -1241,7 +1238,7 @@ class LeadsProvider with ChangeNotifier {
     var url = ApiManager.BASE_URL + ApiManager.source;
     final headers = {
       'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer ${token}',
+      'Authorization': 'Bearer $token',
     };
     // try {
     //   final response = await http.get(Uri.parse(url), headers: headers);
@@ -1286,7 +1283,7 @@ class LeadsProvider with ChangeNotifier {
     var url = ApiManager.BASE_URL + ApiManager.source;
     final headers = {
       'Authorization-token': '3MPHJP0BC63435345341',
-      'Authorization': 'Bearer ${token}',
+      'Authorization': 'Bearer $token',
     };
     // try {
     //   final response = await http.get(Uri.parse(url), headers: headers);

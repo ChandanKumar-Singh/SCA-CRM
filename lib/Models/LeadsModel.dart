@@ -769,8 +769,6 @@ class Statuses {
 
 import 'dart:convert';
 
-
-
 LeadsModel leadsModelFromJson(String str) =>
     LeadsModel.fromJson(json.decode(str));
 
@@ -911,7 +909,7 @@ class Lead {
   String? emiDue;
   String? bounceChargeDue;
   String? lppDue;
-  String? toss;
+  String? tos;
   String? pos;
   String? collAmt;
   String? dcr;
@@ -963,6 +961,14 @@ class Lead {
   String? date;
   String? type;
   String? priority;
+  String? e_receipting_ids;
+  String? strategy;
+  String? loan_age;
+  String? color_code;
+  String? mob;
+  String? mob_type;
+  String? recovery_no;
+  String? priority_pool;
   int? source;
   List<Agents>? agents;
   Statuses? statuses;
@@ -972,109 +978,117 @@ class Lead {
 
   Lead(
       {this.id,
-        this.loanAgreementNo,
-        this.applicationId,
-        this.customername,
-        this.month,
-        this.flowRecovery,
-        this.securedUnsecured,
-        this.bkt,
-        this.actualBkt,
-        this.lmbBkt,
-        this.tmCode,
-        this.branch,
-        this.branchid,
-        this.stateName,
-        this.ncms,
-        this.repaymentMode,
-        this.collectionManager,
-        this.clusterManager,
-        this.stateManager,
-        this.tmName,
-        this.rcms,
-        this.top125,
-        this.category,
-        this.agencyCat,
-        this.agencyNameWithCode,
-        this.fosName,
-        this.eReceiptId,
-        this.mobNumber,
-        this.feedback,
-        this.code,
-        this.remove,
-        this.reasonOfBounce,
-        this.standardReason,
-        this.assetMake,
-        this.registrationNo,
-        this.productflag,
-        this.prod,
-        this.loanAmount,
-        this.loanBookingDate,
-        this.loanMaturityDate,
-        this.disbursalDate,
-        this.dueDate,
-        this.emiAmount,
-        this.emiDue,
-        this.bounceChargeDue,
-        this.lppDue,
-        this.toss,
-        this.pos,
-        this.collAmt,
-        this.dcr,
-        this.rorColl,
-        this.short,
-        this.piColl,
-        this.pgt,
-        this.bistStatus,
-        this.clr,
-        this.status,
-        this.rb,
-        this.sb,
-        this.firstEmiDueDate,
-        this.allocationDate,
-        this.scheme,
-        this.supplier,
-        this.tenure,
-        this.referenceNames,
-        this.referenceNames2,
-        this.referenceNames3,
-        this.referenceAddress,
-        this.referenceAddress3,
-        this.referenceAddress2,
-        this.customerAddPhone1,
-        this.custEreceiptMobileNo,
-        this.customerAddMobile,
-        this.customerAddPhone2,
-        this.customerAddress,
-        this.custPermanentAddress,
-        this.custOfficeAddress,
-        this.custOfficeAddZipcode,
-        this.custPermanentAddZipcode,
-        this.primaryCustomerFathername,
-        this.techNonTech,
-        this.nonstartercases,
-        this.zone,
-        this.dealerCode,
-        this.grossLtv,
-        this.netLtv,
-        this.seName,
-        this.seCode,
-        this.customerCategory,
-        this.riskBand,
-        this.contactabilityIndex,
-        this.digitalAffinity,
-        this.loanStatus,
-        this.dpd,
-        this.emiBilled,
-        this.date,
-        this.type,
-        this.priority,
-        this.source,
-        this.agents,
-        this.statuses,
-        this.leadUser,
-        this.sources,
-        this.newComments});
+      this.loanAgreementNo,
+      this.applicationId,
+      this.customername,
+      this.month,
+      this.flowRecovery,
+      this.securedUnsecured,
+      this.bkt,
+      this.actualBkt,
+      this.lmbBkt,
+      this.tmCode,
+      this.branch,
+      this.branchid,
+      this.stateName,
+      this.ncms,
+      this.repaymentMode,
+      this.collectionManager,
+      this.clusterManager,
+      this.stateManager,
+      this.tmName,
+      this.rcms,
+      this.top125,
+      this.category,
+      this.agencyCat,
+      this.agencyNameWithCode,
+      this.fosName,
+      this.eReceiptId,
+      this.mobNumber,
+      this.feedback,
+      this.code,
+      this.remove,
+      this.reasonOfBounce,
+      this.standardReason,
+      this.assetMake,
+      this.registrationNo,
+      this.productflag,
+      this.prod,
+      this.loanAmount,
+      this.loanBookingDate,
+      this.loanMaturityDate,
+      this.disbursalDate,
+      this.dueDate,
+      this.emiAmount,
+      this.emiDue,
+      this.bounceChargeDue,
+      this.lppDue,
+      this.tos,
+      this.pos,
+      this.collAmt,
+      this.dcr,
+      this.rorColl,
+      this.short,
+      this.piColl,
+      this.pgt,
+      this.bistStatus,
+      this.clr,
+      this.status,
+      this.rb,
+      this.sb,
+      this.firstEmiDueDate,
+      this.allocationDate,
+      this.scheme,
+      this.supplier,
+      this.tenure,
+      this.referenceNames,
+      this.referenceNames2,
+      this.referenceNames3,
+      this.referenceAddress,
+      this.referenceAddress3,
+      this.referenceAddress2,
+      this.customerAddPhone1,
+      this.custEreceiptMobileNo,
+      this.customerAddMobile,
+      this.customerAddPhone2,
+      this.customerAddress,
+      this.custPermanentAddress,
+      this.custOfficeAddress,
+      this.custOfficeAddZipcode,
+      this.custPermanentAddZipcode,
+      this.primaryCustomerFathername,
+      this.techNonTech,
+      this.nonstartercases,
+      this.zone,
+      this.dealerCode,
+      this.grossLtv,
+      this.netLtv,
+      this.seName,
+      this.seCode,
+      this.customerCategory,
+      this.riskBand,
+      this.contactabilityIndex,
+      this.digitalAffinity,
+      this.loanStatus,
+      this.dpd,
+      this.emiBilled,
+      this.date,
+      this.type,
+      this.priority,
+      this.source,
+      this.e_receipting_ids,
+      this.strategy,
+      this.loan_age,
+      this.color_code,
+      this.mob,
+      this.mob_type,
+      this.recovery_no,
+      this.priority_pool,
+      this.agents,
+      this.statuses,
+      this.leadUser,
+      this.sources,
+      this.newComments});
 
   Lead.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -1123,7 +1137,7 @@ class Lead {
     emiDue = json['emi_due'];
     bounceChargeDue = json['bounce_charge_due'];
     lppDue = json['lpp_due'];
-    toss = json['toss'];
+    tos = json['tos'];
     pos = json['pos'];
     collAmt = json['coll_amt'];
     dcr = json['dcr'];
@@ -1176,20 +1190,27 @@ class Lead {
     type = json['type'];
     priority = json['priority'];
     source = json['source'];
+    strategy = json['strategy'];
+    loan_age = json['loan_age'];
+    color_code = json['color_code'];
+    mob = json['mob'];
+    mob_type = json['mob_type'];
+    recovery_no = json['recovery_no'];
+    priority_pool = json['priority_pool'];
+    e_receipting_ids = json['e_receipting_ids'];
+    source = json['source'];
     if (json['agents'] != null) {
       agents = <Agents>[];
       json['agents'].forEach((v) {
         agents!.add(Agents.fromJson(v));
       });
     }
-    statuses = json['statuses'] != null
-        ? Statuses.fromJson(json['statuses'])
-        : null;
-    leadUser = json['lead_user'] != null
-        ? LeadUser.fromJson(json['lead_user'])
-        : null;
+    statuses =
+        json['statuses'] != null ? Statuses.fromJson(json['statuses']) : null;
+    leadUser =
+        json['lead_user'] != null ? LeadUser.fromJson(json['lead_user']) : null;
     sources =
-    json['sources'] != null ? Sources.fromJson(json['sources']) : null;
+        json['sources'] != null ? Sources.fromJson(json['sources']) : null;
     if (json['new_comments'] != null) {
       newComments = <NewComment>[];
       json['new_comments'].forEach((v) {
@@ -1246,7 +1267,7 @@ class Lead {
     data['emi_due'] = emiDue;
     data['bounce_charge_due'] = bounceChargeDue;
     data['lpp_due'] = lppDue;
-    data['toss'] = toss;
+    data['tos'] = tos;
     data['pos'] = pos;
     data['coll_amt'] = collAmt;
     data['dcr'] = dcr;
@@ -1297,6 +1318,14 @@ class Lead {
     data['emi_billed'] = emiBilled;
     data['date'] = date;
     data['type'] = type;
+    data['strategy'] = strategy;
+    data['loan_age'] = loan_age;
+    data['color_code'] = color_code;
+    data['mob'] = mob;
+    data['mob_type'] = mob_type;
+    data['recovery_no'] = recovery_no;
+    data['priority_pool'] = priority_pool;
+    data['e_receipting_ids'] = e_receipting_ids;
     data['priority'] = priority;
     data['source'] = source;
     if (agents != null) {
@@ -1357,40 +1386,40 @@ class Agents {
 
   Agents(
       {this.id,
-        this.designationId,
-        this.firstName,
-        this.lastName,
-        this.email,
-        this.dob,
-        this.phone,
-        this.reportingPerson,
-        this.atContact,
-        this.address,
-        this.deviceToken,
-        this.userProfile,
-        this.status,
-        this.availability,
-        this.deviceId,
-        this.isExcluded,
-        this.permissionMenu,
-        this.permissionForCl,
-        this.dataOfJoining,
-        this.bloodGroup,
-        this.emergencyContactNumber,
-        this.emergencyContactName,
-        this.emergencyContactRelationship,
-        this.addressInUae,
-        this.nationality,
-        this.medicalConditions,
-        this.maritalStatus,
-        this.visaType,
-        this.educationDetails,
-        this.companyId,
-        this.createdBy,
-        this.createdAt,
-        this.fullName,
-        this.pivot,
-        this.metaData});
+      this.designationId,
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.dob,
+      this.phone,
+      this.reportingPerson,
+      this.atContact,
+      this.address,
+      this.deviceToken,
+      this.userProfile,
+      this.status,
+      this.availability,
+      this.deviceId,
+      this.isExcluded,
+      this.permissionMenu,
+      this.permissionForCl,
+      this.dataOfJoining,
+      this.bloodGroup,
+      this.emergencyContactNumber,
+      this.emergencyContactName,
+      this.emergencyContactRelationship,
+      this.addressInUae,
+      this.nationality,
+      this.medicalConditions,
+      this.maritalStatus,
+      this.visaType,
+      this.educationDetails,
+      this.companyId,
+      this.createdBy,
+      this.createdAt,
+      this.fullName,
+      this.pivot,
+      this.metaData});
 
   Agents.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -1427,9 +1456,8 @@ class Agents {
     createdAt = json['created_at'];
     fullName = json['full_name'];
     pivot = json['pivot'] != null ? Pivot.fromJson(json['pivot']) : null;
-    metaData = json['meta_data'] != null
-        ? MetaData.fromJson(json['meta_data'])
-        : null;
+    metaData =
+        json['meta_data'] != null ? MetaData.fromJson(json['meta_data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -1520,25 +1548,25 @@ class MetaData {
 
   MetaData(
       {this.indianNumber,
-        this.dob,
-        this.bloodGroup,
-        this.personalEmail,
-        this.emergencyNumber,
-        this.passportNumber,
-        this.passportExpiryDate,
-        this.visaNumber,
-        this.visaExpiryDate,
-        this.bankName,
-        this.bankIfsc,
-        this.accountNumber,
-        this.addressInUae,
-        this.emergencyContactName,
-        this.emergencyContactRelationship,
-        this.nationality,
-        this.medicalConditions,
-        this.maritalStatus,
-        this.visaType,
-        this.educationDetails});
+      this.dob,
+      this.bloodGroup,
+      this.personalEmail,
+      this.emergencyNumber,
+      this.passportNumber,
+      this.passportExpiryDate,
+      this.visaNumber,
+      this.visaExpiryDate,
+      this.bankName,
+      this.bankIfsc,
+      this.accountNumber,
+      this.addressInUae,
+      this.emergencyContactName,
+      this.emergencyContactRelationship,
+      this.nationality,
+      this.medicalConditions,
+      this.maritalStatus,
+      this.visaType,
+      this.educationDetails});
 
   MetaData.fromJson(Map<String, dynamic> json) {
     indianNumber = json['indian_number'];
@@ -1600,12 +1628,12 @@ class Statuses {
 
   Statuses(
       {this.id,
-        this.name,
-        this.statusorder,
-        this.color,
-        this.isdefault,
-        this.createdAt,
-        this.updatedAt});
+      this.name,
+      this.statusorder,
+      this.color,
+      this.isdefault,
+      this.createdAt,
+      this.updatedAt});
 
   Statuses.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -1662,11 +1690,11 @@ class Sources {
 
   Sources(
       {this.id,
-        this.name,
-        this.status,
-        this.isCroned,
-        this.createdAt,
-        this.updatedAt});
+      this.name,
+      this.status,
+      this.isCroned,
+      this.createdAt,
+      this.updatedAt});
 
   Sources.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -1688,6 +1716,7 @@ class Sources {
     return data;
   }
 }
+
 // class Lead {
 //   Lead({
 //     required this.id,
