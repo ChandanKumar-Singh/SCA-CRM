@@ -633,7 +633,7 @@ class _MyLeadScreenState extends State<MyLeadScreen> {
                           const SizedBox(width: 10),
                         ],
                       ),
-                    if (lp.queryBkt.text.isNotEmpty)
+                    if (lp.selectedBkt != null && lp.selectedBkt != 'All')
                       Row(
                         children: [
                           GestureDetector(
@@ -643,10 +643,10 @@ class _MyLeadScreenState extends State<MyLeadScreen> {
                             },
                             child: Chip(
                               deleteIcon: const Icon(Icons.clear),
-                              label: Text(lp.queryBkt.text),
+                              label: Text(lp.selectedBkt!),
                               onDeleted: () async {
                                 setState(() {
-                                  lp.queryBkt.clear();
+                                  lp.selectedBkt = null;
                                 });
                                 await lp.applyFilter(lp);
                               },
@@ -655,9 +655,7 @@ class _MyLeadScreenState extends State<MyLeadScreen> {
                           const SizedBox(width: 10),
                         ],
                       ),
-                    if (lp.selectedProd != null&&
-                        lp.selectedProd !=
-                            'All')
+                     if (lp.selectedProd != null && lp.selectedProd != 'All')
                       Row(
                         children: [
                           GestureDetector(
@@ -1788,6 +1786,7 @@ class _LeadsFiltersState extends State<LeadsFilters> {
   List<StatusModel> statusList = [];
   List<SourceModel> sourcesList = [];
   List<String> priorityList = [];
+  List<String> bktList = [];
   List<String> prodList = [];
 
   void init() {
@@ -1798,10 +1797,12 @@ class _LeadsFiltersState extends State<LeadsFilters> {
     statusList = lp.statusList;
     sourcesList = lp.sourcesList;
     priorityList = lp.priorityList;
+    bktList = lp.bktList;
     prodList = lp.prodList;
     if (widget.selectedIndex != null) {
       selectedIndex = widget.selectedIndex!;
     }
+    lp.selectedBkt ??= "All";
     lp.selectedProd ??= "All";
   }
 
@@ -1949,30 +1950,93 @@ class _LeadsFiltersState extends State<LeadsFilters> {
         ),
         const SizedBox(height: 10),
         const Divider(),
-        ...prodList.map(
-          (e) => Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: RadioListTile<String>(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)),
-              tileColor: themeColor.withOpacity(0.1),
-              value: e,
-              groupValue: lp.selectedProd,
-              onChanged: (val) {
-                setState(() {
-                  lp.selectedProd = val!;
-                  lp.queryProd.text = e;
-                });
-              },
-              title: Text(e),
-            ),
+        Expanded(
+          child: ListView(
+            children: [
+              ...prodList.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: RadioListTile<String>(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    tileColor: themeColor.withOpacity(0.1),
+                    value: e,
+                    groupValue: lp.selectedProd,
+                    onChanged: (val) {
+                      setState(() {
+                        lp.selectedProd = val!;
+                        lp.queryProd.text = e;
+                      });
+                    },
+                    title: Text(e),
+                  ),
+                ),
+              ),
+            ],
           ),
-        )
+        ),
       ],
     );
   }
 
   Column bktFilter(LeadsProvider lp) {
+    return Column(
+      children: [
+        TextFormField(
+          controller: lp.queryBkt,
+          decoration: InputDecoration(
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
+          onChanged: (val) {
+            if (val.isNotEmpty) {
+              var list = filterSearchResult(
+                  lp.bktList
+                      .map((e) => MapEntry(lp.bktList.indexOf(e), e))
+                      .toList(),
+                  val);
+              setState(() {
+                bktList = list.map((e) => e.value).toList();
+              });
+            } else {
+              setState(() {
+                bktList = lp.bktList;
+                lp.queryBkt.text = '';
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 10),
+        const Divider(),
+        Expanded(
+          child: ListView(
+            children: [
+              ...bktList.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: RadioListTile<String>(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    tileColor: themeColor.withOpacity(0.1),
+                    value: e,
+                    groupValue: lp.selectedBkt,
+                    onChanged: (val) {
+                      setState(() {
+                        lp.selectedBkt = val!;
+                        lp.queryBkt.text = e;
+                      });
+                    },
+                    title: Text(e),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Column bktFilterOnlySearch(LeadsProvider lp) {
     return Column(
       children: [
         TextFormField(
@@ -2001,9 +2065,9 @@ class _LeadsFiltersState extends State<LeadsFilters> {
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
           onChanged: (val) {
-            setState(() {
-              lp.query.text = val;
-            });
+            // setState(() {
+            //   lp.query.text = val;
+            // });
           },
         ),
       ],
@@ -2038,25 +2102,31 @@ class _LeadsFiltersState extends State<LeadsFilters> {
         ),
         const SizedBox(height: 10),
         const Divider(),
-        ...priorityList.map(
-          (e) => Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: RadioListTile<String>(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)),
-              tileColor: themeColor.withOpacity(0.1),
-              value: e,
-              groupValue: lp.selectedPriority,
-              onChanged: (val) {
-                setState(() {
-                  lp.selectedPriority = val!;
-                  lp.queryPriority.text = e;
-                });
-              },
-              title: Text(e),
-            ),
+        Expanded(
+          child: ListView(
+            children: [
+              ...priorityList.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: RadioListTile<String>(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    tileColor: themeColor.withOpacity(0.1),
+                    value: e,
+                    groupValue: lp.selectedPriority,
+                    onChanged: (val) {
+                      setState(() {
+                        lp.selectedPriority = val!;
+                        lp.queryPriority.text = e;
+                      });
+                    },
+                    title: Text(e),
+                  ),
+                ),
+              ),
+            ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -2719,8 +2789,9 @@ class _LeadsFiltersState extends State<LeadsFilters> {
                                                   lp.query.text.isNotEmpty
                                               ? '💤'
                                               : e == lp.categoriesList[6] &&
-                                                      lp.queryBkt.text.isNotEmpty
-                                                  ? lp.queryBkt.text
+                                                      lp.selectedBkt != null &&
+                                                      lp.selectedBkt != 'All'
+                                                  ? lp.selectedBkt!
                                                   : e == lp.categoriesList[7] &&
                                                           lp.selectedProd !=
                                                               null &&

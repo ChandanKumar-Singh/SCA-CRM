@@ -805,6 +805,7 @@ class LeadsProvider with ChangeNotifier {
   List<SourceModel> sourcesList = [];
   List<String> priorityList = [];
   List<String> prodList = ["All", "TW", "LPL", "UC"];
+  List<String> bktList = ["All", "0", "1", "2", "3", "4", "5", "6", "6+"];
   TextEditingController query = TextEditingController();
   TextEditingController queryBkt = TextEditingController();
   TextEditingController queryAgents = TextEditingController(text: 'All');
@@ -820,6 +821,7 @@ class LeadsProvider with ChangeNotifier {
   int? selectedProperty;
   String? selectedPriority;
   String? selectedProd;
+  String? selectedBkt;
 
   List<StatusModel> multiSelectedStatus = [];
   List<SourceModel> multiSelectedSources = [];
@@ -1055,6 +1057,7 @@ class LeadsProvider with ChangeNotifier {
     print(toDate);
     print(selectedProperty);
     print(selectedPriority);
+    print(selectedBkt);
     print(selectedProd);
     print(selectedDeveloper);
     print(multiSelectedStatus);
@@ -1078,12 +1081,12 @@ class LeadsProvider with ChangeNotifier {
         toDate == null &&
         selectedProperty == null &&
         selectedPriority == null &&
-        selectedProd == null || selectedProd == "All" &&
+        selectedProd == null &&
+        selectedBkt == null &&
         selectedDeveloper == null &&
         multiSelectedStatus.isEmpty &&
         multiSelectedSources.isEmpty &&
-        query.text == '' &&
-        queryBkt.text == '') {
+        query.text.isEmpty) {
       if (kDebugMode) {
         print('making false');
       }
@@ -1098,6 +1101,7 @@ class LeadsProvider with ChangeNotifier {
       notifyListeners();
     }
     print('Is filter applied : $isFlrApplied');
+    print('Is filter applied : ${query.text}');
   }
 
   Future<bool> isFilterApplied(bool isApplied) async {
@@ -1108,13 +1112,14 @@ class LeadsProvider with ChangeNotifier {
       toDate = null;
       selectedProperty = null;
       selectedPriority = null;
+      selectedBkt = null;
       selectedProd = null;
       selectedDeveloper = null;
       selectedIndex = 0;
       multiSelectedStatus = [];
       multiSelectedSources = [];
       query.text = '';
-      queryBkt.text = '';
+
       filterData.clear();
       setIsFlrApplied();
       notifyListeners();
@@ -1153,7 +1158,10 @@ class LeadsProvider with ChangeNotifier {
       "source": sourcesString,
       "priority": lp.selectedPriority ?? "",
       "keyword": lp.query.text,
-      "bkt": lp.queryBkt.text,
+      // "bkt": lp.queryBkt.text,
+      "bkt": lp.selectedBkt != null && lp.selectedBkt != "All"
+          ? lp.selectedBkt
+          : "",
       "prod": lp.selectedProd != null && lp.selectedProd != "All"
           ? lp.selectedProd
           : "",
