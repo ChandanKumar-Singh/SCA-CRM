@@ -1064,7 +1064,7 @@ class _LeadDetailState extends State<LeadDetail> {
                                       lp.lead!.lppDue,
                                     ],
                                     [
-                                      'TOSS',
+                                      'TOS',
                                       false,
                                       lp.lead!.tos,
                                     ],

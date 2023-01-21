@@ -63,13 +63,13 @@ class LeadsProvider with ChangeNotifier {
 
   ///Offline // Online
   bool isOffline = false;
-
+ int leadsPerPage=15;
   Future<void> getLeads() async {
     try {
       _isFirstLoadRunning = true;
       notifyListeners();
       var page = 1;
-      var url = '${ApiManager.BASE_URL}${ApiManager.leads}?page=$page';
+      var url = '${ApiManager.BASE_URL}${ApiManager.leads}?page=$page&count=$leadsPerPage';
       debugPrint(url);
       final headers = {
         'Authorization-token': '3MPHJP0BC63435345341',
@@ -102,6 +102,7 @@ class LeadsProvider with ChangeNotifier {
             await APICacheManager().addCacheData(cacheModel);
             var success = responseData['success'];
             var leadData = responseData['data'];
+            print(leadData);
             notifyListeners();
             var message = responseData['message'];
             _leadsData.clear();

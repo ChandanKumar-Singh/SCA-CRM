@@ -655,7 +655,7 @@ class _MyLeadScreenState extends State<MyLeadScreen> {
                           const SizedBox(width: 10),
                         ],
                       ),
-                     if (lp.selectedProd != null && lp.selectedProd != 'All')
+                    if (lp.selectedProd != null && lp.selectedProd != 'All')
                       Row(
                         children: [
                           GestureDetector(
@@ -751,6 +751,10 @@ class _LeadsCardState extends State<LeadsCard> {
 
   @override
   Widget build(BuildContext context) {
+    double t2Size = 14;
+    double t1Size = 16;
+    double subTSize = 12;
+    double capTSize = 12;
     return ListView(
       controller: widget.lp.controller,
       physics: const BouncingScrollPhysics(),
@@ -777,6 +781,345 @@ class _LeadsCardState extends State<LeadsCard> {
             var intCode = int.parse(colorCode);
             color = Color(intCode);
           }
+          return Selectable(
+            selectWordOnLongPress: true,
+            child: Padding(
+              padding: const EdgeInsets.all(0),
+              child: GestureDetector(
+                onTap: () {
+                  if (!widget.lp.selectionMode) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LeadDetail(
+                          lead: lead,
+                        ),
+                      ),
+                    );
+                  } else {
+                    widget.lp.setSelectedLeads(lead);
+                    if (widget.lp.selectedLeads.isEmpty) {
+                      widget.lp.selectionMode = false;
+                      setState(() {});
+                    }
+                  }
+                },
+                child: Card(
+                  elevation: 3,
+                  shadowColor: Colors.blueGrey,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  color: isSelected ? const Color(0xC3B7DBF5) : Colors.white,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey[200]!)),
+                    foregroundDecoration: lead.contactabilityIndex != null
+                        ? RotatedCornerDecoration(
+                            color: themeColor,
+                            geometry: BadgeGeometry(
+                                width: lead.contactabilityIndex!
+                                            .split(' ')
+                                            .length >
+                                        1
+                                    ? 70
+                                    : 50,
+                                cornerRadius: 10,
+                                height: 50),
+                            textSpan: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: lead.contactabilityIndex!
+                                      .split(' ')
+                                      .first,
+                                  style: TextStyle(
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                                if (lead.contactabilityIndex!
+                                        .split(' ')
+                                        .length >
+                                    1)
+                                  TextSpan(
+                                    text: '\n' +
+                                        lead.contactabilityIndex!.split(' ')[1],
+                                    style: const TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
+                                  ),
+                              ],
+                            ),
+                            labelInsets: const LabelInsets(baselineShift: 3),
+                          )
+                        : null,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 6,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 8.0, top: 5),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text('Loan ID : ',
+                                            style: TextStyle(
+                                                fontSize: t2Size,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            overflow: TextOverflow.ellipsis),
+                                        Expanded(
+                                          child: Text(
+                                            lead.loanAgreementNo.toString(),
+                                            style: TextStyle(
+                                                fontSize: t2Size,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      lead.customername.toString(),
+                                      style: TextStyle(
+                                          fontSize: t1Size,
+                                          color: Get
+                                              .theme.textTheme.bodyText1!.color,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    // const SizedBox(height: 3),
+                                    Row(
+                                      children: [
+                                        Text('Application ID : ',
+                                            style: TextStyle(
+                                                fontSize: subTSize,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            overflow: TextOverflow.ellipsis),
+                                        Expanded(
+                                          child: Text(
+                                            lead.applicationId.toString(),
+                                            style: TextStyle(
+                                                fontSize: subTSize,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Row(
+                                      children: [
+                                        Text('Registration No. : ',
+                                            style: TextStyle(
+                                                fontSize: capTSize,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            overflow: TextOverflow.ellipsis),
+                                        Expanded(
+                                          child: Text(
+                                            lead.registrationNo ?? '',
+                                            style: TextStyle(
+                                                fontSize: subTSize,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    // const SizedBox(height: 7),
+                                    // SizedBox(
+                                    //   width: 180,
+                                    //   child: Row(
+                                    //     children: [
+                                    //       Expanded(
+                                    //         child: Row(
+                                    //           children: [
+                                    //             FaIcon(
+                                    //               FontAwesomeIcons
+                                    //                   .moneyBillWave,
+                                    //               size: 13,
+                                    //               color:
+                                    //                   Colors.red.withOpacity(1),
+                                    //             ),
+                                    //             const SizedBox(width: 10),
+                                    //             Expanded(
+                                    //               child: Text(
+                                    //                 lead.loanAmount != null
+                                    //                     ? 'Rs.' +
+                                    //                         lead.loanAmount
+                                    //                             .toString()
+                                    //                     : '',
+                                    //                 style: const TextStyle(
+                                    //                   fontSize: 14,
+                                    //                   overflow:
+                                    //                       TextOverflow.fade,
+                                    //                 ),
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //       ),
+                                    //       const SizedBox(width: 7),
+                                    //       Expanded(
+                                    //         child: Row(
+                                    //           children: [
+                                    //             FaIcon(
+                                    //               FontAwesomeIcons.paypal,
+                                    //               size: 13,
+                                    //               color: Colors.teal
+                                    //                   .withOpacity(1),
+                                    //             ),
+                                    //             const SizedBox(width: 10),
+                                    //             Expanded(
+                                    //               child: Text(
+                                    //                 lead.emiDue != null
+                                    //                     ? 'Rs.' +
+                                    //                         lead.emiDue
+                                    //                             .toString()
+                                    //                     : '',
+                                    //                 style: const TextStyle(
+                                    //                   fontSize: 14,
+                                    //                   overflow:
+                                    //                       TextOverflow.fade,
+                                    //                 ),
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    // ),
+                                    // const SizedBox(height: 5),
+                                    // Row(
+                                    //   children: [
+                                    //     Expanded(
+                                    //       child: Row(
+                                    //         children: [
+                                    //           FaIcon(
+                                    //             FontAwesomeIcons.codeBranch,
+                                    //             color:
+                                    //                 Colors.green.withOpacity(1),
+                                    //             size: 15,
+                                    //           ),
+                                    //           const SizedBox(width: 10),
+                                    //           Expanded(
+                                    //             child: Text(
+                                    //               lead.branch ?? '',
+                                    //               style: const TextStyle(
+                                    //                 fontSize: 14,
+                                    //                 overflow: TextOverflow.fade,
+                                    //               ),
+                                    //             ),
+                                    //           ),
+                                    //         ],
+                                    //       ),
+                                    //     ),
+                                    //     // Row(
+                                    //     //   children: [
+                                    //     //     const Text(
+                                    //     //       '📱',
+                                    //     //       style: TextStyle(
+                                    //     //         fontSize: 14,
+                                    //     //         overflow: TextOverflow.fade,
+                                    //     //       ),
+                                    //     //     ),
+                                    //     //     const SizedBox(width: 10),
+                                    //     //     Text(
+                                    //     //       lead.customerAddMobile != null &&
+                                    //     //               lead.customerAddMobile!
+                                    //     //                       .length >
+                                    //     //                   5
+                                    //     //           ? lead.customerAddMobile!
+                                    //     //           : 'N/A',
+                                    //     //       style: const TextStyle(
+                                    //     //         fontSize: 14,
+                                    //     //         overflow: TextOverflow.fade,
+                                    //     //       ),
+                                    //     //     ),
+                                    //     //   ],
+                                    //     // ),
+                                    //   ],
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: InkWell(
+                                onTap: () {
+                                  print('call');
+                                  try {
+                                    _callNumber(
+                                        'tel:${lead.customerAddMobile}');
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 18.0,
+                                  ),
+                                  child: Image.asset(
+                                    ImageConst.call_icon,
+                                    height: t1Size,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // const SizedBox(height: 15),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: Row(
+                            children: [
+                              const Expanded(child: Divider(thickness: 1)),
+                              const SizedBox(width: 10),
+                              Row(
+                                children: [
+                                  FaIcon(FontAwesomeIcons.batteryHalf,
+                                      color: themeColor, size: subTSize),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    lead.digitalAffinity != null
+                                        ? lead.digitalAffinity!
+                                        : "N/A",
+                                    style: TextStyle(
+                                      fontSize: capTSize,
+                                      overflow: TextOverflow.fade,
+                                      color: themeColor,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 3,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
           return Selectable(
             selectWordOnLongPress: true,
             child: Padding(

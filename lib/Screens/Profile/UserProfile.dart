@@ -291,6 +291,7 @@ class _UserProfileState extends State<UserProfile> {
                     TextFormField(
                       keyboardType: TextInputType.phone,
                       controller: _phoneController,
+                      enabled: false,
                       decoration: InputDecoration(
                           fillColor: Colors.grey[150],
                           filled: true,
